@@ -1,0 +1,21 @@
+{
+  "_uitleg": "Kopieer dit bestand naar config/persoon.json en vul je eigen gegevens in. persoon.json staat in .gitignore en wordt nooit gedeeld. INSTALL.ps1 leest dit bestand en zet je handtekening en paden goed.",
+
+  "naam": "Voornaam Achternaam",
+  "functie": "FUNCTIETITEL IN HOOFDLETTERS",
+  "email": "voornaam.achternaam@agyle.nl",
+  "telefoon": "+31600000000",
+
+  "_bookings": "Je persoonlijke Outlook Bookings-link. Te vinden via outlook.office.com/bookwithme -> Delen. Laat leeg als je die (nog) niet hebt; het boekingsblok wordt dan weggelaten uit je handtekening.",
+  "bookings_url": "",
+
+  "_clients_root": "Absoluut pad naar de clients-map in jouw OneDrive/SharePoint-sync. Skills die klantbestanden wegschrijven gebruiken dit in plaats van een hardcoded pad.",
+  "clients_root": "C:\\Users\\JOUWNAAM\\OneDrive - Agyle\\agyle-business\\clients",
+
+  "_prep_output": "Waar /prep-klant zijn voorbereidingen neerzet. Mag buiten agyle-business liggen.",
+  "prep_output_dir": "C:\\Users\\JOUWNAAM\\OneDrive - Agyle\\Documents\\Voorbereiding klanten",
+
+  "_ms365": "Eigen tokencache-pad. VERPLICHT eigen pad per persoon: twee mensen op hetzelfde pad delen elkaars mailbox-token.",
+  "ms365_token_cache_path": "C:\\Users\\JOUWNAAM\\.claude\\.ms365-token-cache.json",
+  "ms365_selected_account_path": "C:\\Users\\JOUWNAAM\\.claude\\.ms365-account.json"
+}

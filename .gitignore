@@ -1,0 +1,31 @@
+# Secrets — nooit committen
+.env
+*.env
+!*.env.example
+*.key
+*.pem
+credentials.json
+.credentials.json
+
+# Persoonlijke configuratie (per medewerker, niet gedeeld)
+config/persoon.json
+
+# Token-caches van MCP-servers
+*token-cache*
+*.token
+.mcp-auth/
+
+# Hook-state
+.progress_state/
+.handover_state/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

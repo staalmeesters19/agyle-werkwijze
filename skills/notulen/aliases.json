@@ -1,0 +1,18 @@
+{
+  "_comment": "Bekende spraakherkennings-verhaspelingen van namen. Key = wat Plaud/AssemblyAI ervan maakt, value = de juiste schrijfwijze. Groeit met elke sessie: voeg toe zodra je een nieuwe verhaspeling betrapt. Alleen namen waarvan de correcte spelling bevestigd is (klant-CLAUDE.md, agenda-uitnodiging, mailhandtekening).",
+  "vandenpol": {
+    "_letop": "Corné Fokkema en Cornée van Ende zijn TWEE verschillende personen bij Van den Pol. Nooit automatisch mappen — bepaal wie het is uit het project (Cornée van Ende = FDS, inhoudelijk) en de context van het gesprek.",
+    "Christian": "Cristian de la Santa Cruz Urbano",
+    "Roman": "Ronald",
+    "Gerbert": "Gerben Settels",
+    "Settels": "Gerben Settels"
+  },
+  "_generiek": {
+    "Agile": "Agyle",
+    "Adjail": "Agyle",
+    "Abdoel": "Abdul Malik",
+    "Plout": "Plaud",
+    "Sintes": "Syntess",
+    "Sintess": "Syntess"
+  }
+}

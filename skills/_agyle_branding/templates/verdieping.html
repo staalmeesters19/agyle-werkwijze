@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdiepingsnotitie — {{TITEL}}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 20mm 25mm 20mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.65;
+            color: #1a1a1a;
+            background: #fff;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 16px;
+            border-bottom: 3px solid #000;
+            margin-bottom: 8px;
+        }
+
+        .header-left h1 {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.5px;
+        }
+
+        .header-left .subtitle {
+            font-size: 11pt;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .header-right img {
+            height: 40px;
+            width: auto;
+        }
+
+        .intro {
+            font-size: 10.5pt;
+            color: #555;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        /* Section numbers */
+        .section-number {
+            display: inline-block;
+            background: #000;
+            color: #7ec8e3;
+            font-size: 11pt;
+            font-weight: 700;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 4px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* Section headers */
+        h2 {
+            font-size: 15pt;
+            font-weight: 700;
+            color: #000;
+            margin-top: 28px;
+            margin-bottom: 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #7ec8e3;
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: 600;
+            color: #333;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        /* Content */
+        p {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        ul li {
+            margin-bottom: 6px;
+        }
+
+        /* Quote blocks — for their own words */
+        .client-quote {
+            border-left: 4px solid #7ec8e3;
+            padding: 12px 16px;
+            margin: 12px 0 16px 0;
+            background: #f7fbfd;
+            font-style: italic;
+            color: #333;
+            font-size: 10.5pt;
+        }
+
+        .client-quote .source {
+            font-style: normal;
+            font-size: 9.5pt;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        /* Implication box */
+        .implication {
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid #000;
+            padding: 12px 16px;
+            margin: 12px 0 16px 0;
+            background: #fafafa;
+            font-size: 10.5pt;
+            color: #333;
+        }
+
+        .implication strong {
+            color: #000;
+        }
+
+        /* CTA box */
+        .cta-box {
+            border: 2px solid #000;
+            padding: 20px 24px;
+            margin: 24px 0;
+            background: #f7fbfd;
+        }
+
+        .cta-box h3 {
+            font-size: 13pt;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .cta-box p {
+            margin-bottom: 8px;
+        }
+
+        .cta-box .next-step {
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* Accent bar */
+        .accent-bar {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #7ec8e3 0%, #000 100%);
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 48px;
+            padding-top: 12px;
+            border-top: 2px solid #000;
+            font-size: 9pt;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-brand {
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* Page break helper */
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+
+<div class="accent-bar"></div>
+
+<div class="header">
+    <div class="header-left">
+        <h1>Verdiepingsnotitie</h1>
+        <div class="subtitle">{{TITEL}}</div>
+    </div>
+    <div class="header-right">
+        <img src="data:image/png;base64,{{LOGO_BASE64}}" alt="Agyle">
+    </div>
+</div>
+
+<div class="intro">
+    Naar aanleiding van ons gesprek op {{DATUM}} — {{LOCATIE}}
+</div>
+
+<h2><span class="section-number">1</span> Wat we gehoord hebben</h2>
+
+{{GEHOORD_HTML}}
+
+<h2><span class="section-number">2</span> Wat dit betekent</h2>
+
+{{BETEKENIS_HTML}}
+
+<h2><span class="section-number">3</span> Mogelijke eerste stap</h2>
+
+{{EERSTE_STAP_HTML}}
+
+<div class="footer">
+    <div class="footer-brand">A G Y L E</div>
+    <div>Dit document is opgesteld door Agyle. Voor vragen, neem contact op via abdul.malik@agyle.nl</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+/* ============================================================================
+   AGYLE VOORSTEL-CHASSIS
+   Tokenlaag + sectie-grammatica + motion + componenten.
+   Afgeleid uit de Clark-teardown; alle waarden onderbouwd in reference/PLAYBOOK.md.
+   Ontwerpframe 1440px · --max-w 1600px · type-vw = designwaarde ÷ 14.4
+   ============================================================================ */
+
+/* ---------------------------------------------------------------- 1. TOKENS */
+:root {
+  /* KLEUR — 3 dragend + 1 functioneel. Nooit een nieuwe hex bijmaken. */
+  --brand-black: #000000;   /* alleen logo/merkvlak — officieel Agyle-zwart */
+  --ink:         #070C0E;   /* PAGINAZWART: sky-getint. Puur #000 haalt "duur" nooit */
+  --sky:         #97D4E8;   /* Agyle sky blue, Pantone 2975 C — accent + vlak */
+  --sky-ink:     #10596E;   /* sky, donker genoeg voor tekst op licht (7:1 op wit) */
+  --paper:       #EDF6F9;   /* sky @20% over wit — de rustkleur */
+  --off-white:   #F7FBFD;   /* kaartvlak op --paper */
+  --on-dark:     #F2FBFE;   /* TEKST OP DONKER — géén #FFFFFF; wit op kleur schreeuwt */
+  --card-dark:   #202527;   /* kaart op --ink: 25 punten lichter, zonder rand */
+  --ok:          #35A96F;   /* ENIGE functionele kleur: goed / gedaan / akkoord */
+
+  --muted:       #5A6A70;   /* secundaire tekst op licht */
+  --muted-light: #B9C6CB;   /* secundaire tekst op donker */
+  --muted-mid:   #8A979C;   /* tertiair, beide kanten */
+  --line:        #D3E0E5;   /* hairline op licht */
+
+  /* ALFA-LADDER op donker — geen enkele extra hex voor secundaire tekst */
+  --a-primary:   rgba(255,255,255,0.85);
+  --a-intro:     rgba(255,255,255,0.80);
+  --a-secondary: rgba(255,255,255,0.60);
+  --a-label:     rgba(255,255,255,0.50);
+  --a-quiet:     rgba(255,255,255,0.45);
+  --a-hairline:  rgba(255,255,255,0.08);
+  --a-hairline-strong: rgba(255,255,255,0.15);
+  --a-surface:   rgba(255,255,255,0.05);
+
+  /* MAAT */
+  --max-w:    1600px;
+  --pad-x:    clamp(24px, 5.55vw, 89px);   /* 80px @1440, topt af @1604 */
+  --header-h: 80px;                         /* nooit hardcoden in calc() */
+
+  /* TYPE — coëfficiënt = designwaarde ÷ 14.4 */
+  --t-display: clamp(48px, 6.11vw, 98px);   /* 88 @1440 */
+  --t-h1:      clamp(36px, 4.44vw, 71px);   /* 64 */
+  --t-h2:      clamp(28px, 3.33vw, 53px);   /* 48 */
+  --t-h3:      clamp(22px, 2.22vw, 36px);   /* 32 */
+  --t-h4:      clamp(16px, 1.67vw, 27px);   /* 24 */
+  --t-body:    clamp(16px, 1.39vw, 22px);   /* 20 */
+  --t-small:   clamp(12px, 1.04vw, 17px);   /* 15 */
+  --t-label:   clamp(13px, 1.11vw, 18px);   /* 16, uppercase */
+
+  /* RUIMTE — max = 2 × min, vw = max ÷ 16 */
+  --sp-section: clamp(64px, 8vw, 128px);
+  --sp-block:   clamp(32px, 4vw, 64px);
+  --sp-card:    clamp(16px, 1.66vw, 27px);
+  --sp-tight:   clamp(10px, 1.11vw, 18px);
+
+  /* VORM — één kaartradius, vloeiend. Geen box-shadow in het systeem. */
+  --radius:      clamp(16px, 1.66vw, 27px);
+  --radius-pill: 32px;
+
+  /* MOTION */
+  --ease-out-expo:  cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);  /* nooit op tekst */
+  --d-micro: 0.2s;  --d-state: 0.3s;  --d-panel: 0.38s;  --d-reveal: 0.7s;
+}
+
+@media (max-width: 768px) { :root { --pad-x: 24px; --header-h: 64px; } }
+
+/* ------------------------------------------------------------- 2. RESET */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'AgyleSans', system-ui, -apple-system, sans-serif;  /* vervang door je licentiefont */
+  font-weight: 400; font-size: var(--t-body); line-height: 1.5;
+  color: var(--ink); background: var(--off-white); overflow-x: hidden;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; transition: opacity var(--d-state) ease; }
+button { border: none; background: none; cursor: pointer; font: inherit; }
+ul { list-style: none; }
+
+/* Focus zichtbaar houden — Clark zet outline globaal uit zonder vervanging */
+:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+
+/* Type-registers, streng */
+h1, h2, .display { line-height: 1.1; letter-spacing: -0.01em; }
+p, li            { line-height: 1.5; }
+.amount          { line-height: 1.0; font-variant-numeric: tabular-nums; }
+.label, .eyebrow { text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Meetregel: container mag breed, tekstblok nooit */
+.measure { max-width: clamp(400px, 55vw, 800px); }
+
+/* --------------------------------------------------- 3. SECTIE-GRAMMATICA */
+.sec        { padding: var(--sp-section) 0; }
+.sec__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--pad-x); }
+
+/* Kleurpartituur: donker = wij vragen iets · licht = jullie krijgen iets
+   sky = alleen hero, aanpak en CTA. Nooit twee identieke achtergronden achter elkaar. */
+.sec--dark  { background: var(--ink);       color: var(--on-dark); }
+.sec--sky   { background: var(--sky);       color: var(--ink); }
+.sec--paper { background: var(--paper);     color: var(--ink); }
+.sec--white { background: var(--off-white); color: var(--ink); }
+
+/* De molecule: eyebrow → titel → intro → content */
+.eyebrow   { font-weight: 500; font-size: var(--t-label);
+             margin-bottom: clamp(12px, 1vw, 20px); }
+.sec-title { font-weight: 700; font-size: clamp(36px, 4.5vw, 72px);
+             margin-bottom: clamp(32px, 3vw, 64px); }
+.sec-intro { font-weight: 400; font-size: clamp(16px, 1.3vw, 26px); line-height: 1.5;
+             max-width: clamp(400px, 55vw, 800px);
+             margin-bottom: clamp(40px, 4vw, 80px); }
+
+/* Zet color op de sectievariant, niet op de kop — de kop erft. */
+.sec--dark .eyebrow   { color: var(--a-label); }
+.sec--dark .sec-intro { color: var(--a-intro); }
+.sec--paper .eyebrow, .sec--white .eyebrow     { color: var(--muted); }
+.sec--paper .sec-intro, .sec--white .sec-intro { color: var(--muted); }
+
+/* Hero — svh ná vh, dat elimineert de sprong door de mobiele URL-balk */
+.hero { min-height: 100vh; min-height: 100svh;
+        display: flex; align-items: center;
+        background: var(--ink); color: var(--on-dark); }
+
+/* ------------------------------------------------------------- 4. MOTION */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity var(--d-reveal) var(--ease-out-expo),
+              transform var(--d-reveal) var(--ease-out-expo);
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* Stagger via de container, niet via nth-child: onbegrensd en telt geen siblings mee */
+.reveal-group > * {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity var(--d-reveal) var(--ease-out-expo),
+              transform var(--d-reveal) var(--ease-out-expo);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.reveal-group.is-visible > * { opacity: 1; transform: none; }
+
+/* Signaal en effect gescheiden: reveal-klasse als vlag, eigen keyframes gepauzeerd.
+   Het beste steelbare patroon van de Clark-site. */
+.choreo.reveal { opacity: 1; transform: none; }
+.choreo__item  { opacity: 0; transform: scale(0);
+                 animation: popIn .6s var(--ease-overshoot) forwards;
+                 animation-play-state: paused; }
+.choreo.is-visible .choreo__item { animation-play-state: running; }
+.choreo__item:nth-child(1) { animation-delay: 0s;   }
+.choreo__item:nth-child(2) { animation-delay: .15s; }
+.choreo__item:nth-child(3) { animation-delay: .30s; }
+.choreo__item:nth-child(4) { animation-delay: .45s; }
+@keyframes popIn { from { opacity:0; transform:scale(0); } to { opacity:1; transform:scale(1); } }
+
+/* Precies één ambient beweging op de hele pagina. Die schaarste is waarom het duur oogt. */
+.ambient { animation: bounce 2s ease-in-out infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+@media (max-width: 768px) {
+  .reveal, .reveal-group > * { transform: translateY(30px); transition-duration: .6s; }
+}
+
+/* Twee blokken die Clark volledig vergeet */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal, .reveal-group > * { opacity: 1 !important; transform: none !important;
+                               transition: none !important; }
+  .choreo__item { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .ambient { animation: none !important; }
+}
+.no-js .reveal, .no-js .reveal-group > * { opacity: 1; transform: none; }
+
+/* --------------------------------------------------------- 5. COMPONENTEN */
+/* Geen box-shadow. Diepte komt uit full-bleed kleurvlak + hairline.
+   Stroke-register: 1px = data/scheiding · 2px = structuur · 4px = accent. */
+
+.card { border-radius: var(--radius); padding: clamp(24px, 2.2vw, 36px);
+        transition: transform var(--d-state) var(--ease-out-expo); }
+.sec--dark  .card { background: var(--card-dark); color: var(--on-dark); }
+.sec--paper .card, .sec--white .card { background: var(--off-white); border: 1px solid var(--line); }
+@media (hover: hover) { .card:hover { transform: translateY(-4px); } }
+
+.card--accent { position: relative; overflow: hidden; }
+.card--accent::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px;
+                        background: var(--sky); }
+
+/* Accent-triade: één hex, drie oppervlakken. Voor élke chip, badge en callout. */
+.chip { display: inline-flex; align-items: center; gap: 8px;
+        padding: 6px 14px; border-radius: var(--radius-pill);
+        font-size: var(--t-small); font-weight: 600;
+        background: rgba(151, 212, 232, 0.12);
+        border: 1px solid rgba(151, 212, 232, 0.25);
+        color: var(--sky); }
+.sec--paper .chip, .sec--white .chip { color: var(--sky-ink); }
+.chip--ok { background: rgba(53,169,111,.15); border-color: rgba(53,169,111,.3); color: var(--ok); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+       padding: 16px 28px; border-radius: var(--radius-pill);
+       font-size: var(--t-body); font-weight: 500;
+       transition: opacity var(--d-state) ease, transform var(--d-state) var(--ease-out-expo); }
+.btn:hover { opacity: .85; transform: translateY(-2px); }
+.btn--primary { background: var(--sky); color: var(--ink); }
+.btn--ghost   { background: transparent; color: var(--on-dark); border: 2px solid var(--on-dark); }
+
+/* Grid dat op telefoon écht één kolom is — layout-uitzonderingen krijgen een
+   modifier-klasse, NOOIT een inline style (die verslaat elke media query). */
+.grid    { display: grid; gap: var(--sp-card); grid-template-columns: 1fr; }
+@media (min-width: 1080px) {
+  .grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .split   { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-block); }
+  /* Sticky kolom: hoogste effect-per-regel op de hele pagina */
+  .split__sticky { position: sticky; top: calc(var(--header-h) + var(--sp-block));
+                   align-self: start; }
+}
+
+/* Accordeon zonder JS-meting: grid-rows i.p.v. max-height */
+.acc__head { display: flex; width: 100%; justify-content: space-between; align-items: center;
+             gap: var(--sp-tight); padding: clamp(18px,1.6vw,26px) 0; text-align: left;
+             border-bottom: 1px solid var(--line); font-size: var(--t-h4); font-weight: 500; }
+.acc__body { display: grid; grid-template-rows: 0fr;
+             transition: grid-template-rows var(--d-panel) var(--ease-out-expo); }
+.acc__body > div { overflow: hidden; }
+.acc.is-open .acc__body { grid-template-rows: 1fr; }
+.acc__icon { transition: transform var(--d-state) ease; flex: none; }
+.acc.is-open .acc__icon { transform: rotate(45deg); }
+
+/* Geldtypografie — vier contrasten op één regel */
+.amount        { font-weight: 900; font-size: clamp(32px, 3.2vw, 64px); }
+.amount span   { font-weight: 400; font-size: clamp(14px, 1.2vw, 22px); color: var(--a-label); }
+.amount-kicker { font-weight: 600; font-size: clamp(11px, 0.85vw, 14px);
+                 letter-spacing: 0.12em; text-transform: uppercase; opacity: .85; }
+/* Agyle-uitzondering: de eenheid ("p.m.", "excl. btw") staat in DEZELFDE grootte als het
+   getal zodra hij de prijs vermenigvuldigt. Geen wegregelen in bijschrift-formaat. */
+
+/* Header die wegduikt — zodra de chrome weg is leest het brein "presentatie" */
+.header { position: fixed; inset: 0 0 auto 0; height: var(--header-h); z-index: 900;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 0 var(--pad-x); background: var(--ink); color: var(--on-dark);
+          border-bottom: 1px solid var(--a-hairline);
+          transition: transform .35s var(--ease-out-expo); }
+.header.is-hidden { transform: translateY(-100%); }
+
+/* -------------------------------------------------------------- 6. GATE */
+.gate { position: fixed; inset: 0; z-index: 10000; background: var(--ink);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: var(--sp-block);
+        transition: opacity .5s ease, visibility .5s ease; }
+.gate.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.gate__logo  { height: clamp(48px, 5vw, 72px); }
+.gate__label { font-size: var(--t-label); text-transform: uppercase; letter-spacing: .08em;
+               color: var(--a-quiet); }
+.gate__title { font-size: clamp(24px, 2.8vw, 44px); font-weight: 700; color: var(--on-dark); }
+.gate__inputs { display: flex; gap: var(--sp-tight); }
+.gate__digit {
+  width: clamp(56px, 6vw, 80px); height: clamp(64px, 7vw, 96px);   /* hóger dan breed */
+  border: 2px solid rgba(255,255,255,.25); border-radius: clamp(12px, 1.2vw, 18px);
+  background: var(--a-surface); color: var(--on-dark);
+  font-weight: 700; font-size: clamp(28px, 3vw, 44px); text-align: center;
+  caret-color: transparent;                    /* met cursor is het een formulier, zonder een slot */
+  transition: border-color var(--d-state) ease, background var(--d-state) ease;
+}
+.gate__digit.is-filled { border-color: rgba(255,255,255,.5); }
+.gate__inputs.is-error { animation: pinShake .45s ease; }
+@keyframes pinShake {                          /* DEMPEND, niet symmetrisch */
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); } 40% { transform: translateX(10px); }
+  60% { transform: translateX(-8px);  } 80% { transform: translateX(6px);  }
+}
+.gate__inputs.is-success .gate__digit { border-color: var(--ok);
+                                        background: rgba(53,169,111,.15);
+                                        animation: pinSuccess .35s ease; }
+@keyframes pinSuccess { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+
+/* -------------------------------------------------------------- 7. PRINT */
+/* Zonder dit blok print de pagina blanco: alles staat op opacity:0 tot de observer het raakt. */
+@media print {
+  .reveal, .reveal-group > * { opacity: 1 !important; transform: none !important; }
+  .acc__body { grid-template-rows: 1fr !important; }
+  .acc__body > div { overflow: visible !important; }
+  .sec, .card { print-color-adjust: exact; -webkit-print-color-adjust: exact;
+                break-inside: avoid; }
+  .header { position: static !important; }
+  .gate, .modal, .ambient { display: none !important; }
+}

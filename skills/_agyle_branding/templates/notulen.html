@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notulen — {{TITEL}}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 20mm 25mm 20mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 3px solid #000;
+            margin-bottom: 24px;
+        }
+
+        .header-left h1 {
+            font-size: 22pt;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.5px;
+        }
+
+        .header-left .subtitle {
+            font-size: 11pt;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .header-right img {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Metadata table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 28px;
+            font-size: 10pt;
+        }
+
+        .meta-table td {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .meta-table td:first-child {
+            font-weight: 600;
+            width: 140px;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Section headers */
+        h2 {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #000;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #7ec8e3;
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: 600;
+            color: #333;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        /* Content */
+        p {
+            margin-bottom: 8px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Action items table */
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 10pt;
+        }
+
+        .action-table th {
+            background: #000;
+            color: #fff;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .action-table td {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .action-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 48px;
+            padding-top: 12px;
+            border-top: 2px solid #000;
+            font-size: 9pt;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-brand {
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* Accent bar */
+        .accent-bar {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #7ec8e3 0%, #000 100%);
+            margin-bottom: 20px;
+        }
+
+        /* Page break helper */
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+
+<div class="accent-bar"></div>
+
+<div class="header">
+    <div class="header-left">
+        <h1>Notulen</h1>
+        <div class="subtitle">{{TITEL}}</div>
+    </div>
+    <div class="header-right">
+        <img src="data:image/png;base64,{{LOGO_BASE64}}" alt="Agyle">
+    </div>
+</div>
+
+<table class="meta-table">
+    <tr>
+        <td>Datum</td>
+        <td>{{DATUM}}</td>
+    </tr>
+    <tr>
+        <td>Locatie</td>
+        <td>{{LOCATIE}}</td>
+    </tr>
+    <tr>
+        <td>Deelnemers</td>
+        <td>{{DEELNEMERS}}</td>
+    </tr>
+    <tr>
+        <td>Type meeting</td>
+        <td>{{TYPE_MEETING}}</td>
+    </tr>
+    <tr>
+        <td>Duur</td>
+        <td>{{DUUR}}</td>
+    </tr>
+    <tr>
+        <td>Opgesteld door</td>
+        <td>Agyle</td>
+    </tr>
+</table>
+
+<h2>Besproken onderwerpen</h2>
+
+{{ONDERWERPEN}}
+
+<h2>Actiepunten</h2>
+
+<table class="action-table">
+    <thead>
+        <tr>
+            <th>Wie</th>
+            <th>Actie</th>
+            <th>Deadline</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ACTIEPUNTEN}}
+    </tbody>
+</table>
+
+<h2>Vervolgstappen</h2>
+
+{{VERVOLGSTAPPEN}}
+
+<div class="footer">
+    <div class="footer-brand">A G Y L E</div>
+    <div>Dit document is opgesteld door Agyle. Voor vragen, neem contact op via abdul.malik@agyle.nl</div>
+</div>
+
+</body>
+</html>
