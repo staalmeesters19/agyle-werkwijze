@@ -83,6 +83,5 @@ Agyle-basis.
 ## Skills die je niet krijgt
 
 Een paar van Abduls skills zijn persoonsgebonden en zitten daarom niet in dit pakket:
-`/linkedin-post` (geschreven in zijn stem), `/video-scan` (beoordeelt op zijn
-interessegebied), `/nomura-pitch` (privéproject) en `/diagram-generator` (hangt aan een
-andere repository). Heb je zoiets nodig, overleg dan — een eigen variant maken kan.
+`/video-scan` (beoordeelt op zijn interessegebied), `/nomura-pitch` (privéproject) en
+`/diagram-generator` (hangt aan een andere repository). Heb je zoiets nodig, overleg dan — een eigen variant maken kan.

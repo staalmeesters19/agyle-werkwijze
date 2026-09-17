@@ -1,7 +1,7 @@
 ---
 name: mail
 description: Zet in één keer een schone, ondertekende Outlook-conceptmail klaar (nieuwe mail of reply) — Agyle-handtekening via gehoste afbeeldingen, nooit verzonden. Gebruik wanneer de gebruiker "mail naar X over Y", "stuur een mailtje", "reply op die thread" o.i.d. vraagt. Vervangt het handmatige mail-klaarzetten.
-allowed-tools: Read, ToolSearch, mcp__ms365__create-draft-email, mcp__ms365__create-reply-draft, mcp__ms365__create-reply-all-draft, mcp__ms365__update-mail-message, mcp__ms365__list-users, mcp__ms365__list-mail-messages, mcp__ms365__list-mail-folder-messages, mcp__ms365__get-mail-message, mcp__ms365__list-outlook-contacts
+allowed-tools: Read, Bash, ToolSearch, mcp__ms365__create-draft-email, mcp__ms365__create-reply-draft, mcp__ms365__create-reply-all-draft, mcp__ms365__update-mail-message, mcp__ms365__create-mail-attachment-upload-session, mcp__ms365__list-mail-attachments, mcp__ms365__list-users, mcp__ms365__list-mail-messages, mcp__ms365__list-mail-folder-messages, mcp__ms365__get-mail-message, mcp__ms365__list-outlook-contacts
 ---
 
 # Skill: `/mail` — schone ondertekende Outlook-conceptmail
@@ -15,7 +15,7 @@ verstuurt zelf.
 
 ## Kernregels (niet-onderhandelbaar)
 
-1. **Handtekening = gehoste-URL-blok, GEEN bijlagen.** Lees `~/.claude/assets/agyle-signature-url.html` en plak dat één-op-één onderaan de body. Roep **nooit** `add-mail-attachment` aan. (Waarom: inline-cid-plaatjes worden door OWA gedupliceerd/verminkt.) Dat bestand is per persoon gegenereerd door `INSTALL.ps1` en bevat de naam, het mailadres en de boekingslink van de huidige gebruiker. Ontbreekt het: stop en meld dat `INSTALL.ps1` nog moet draaien — verzin nooit zelf een handtekening.
+1. **Handtekening = gehoste-URL-blok, GEEN bijlagen.** Lees `~/.claude/assets/agyle-signature-url.html` en plak dat één-op-één onderaan de body. Roep voor de handtekening **nooit** `add-mail-attachment` aan. (Waarom: inline-cid-plaatjes worden door OWA gedupliceerd/verminkt.) Dit verbod gaat over de handtekening. Échte documentbijlagen (PDF's, Word) mogen wél mee — via de upload-sessie in stap 4, nooit via base64. Dat bestand is per persoon gegenereerd door `INSTALL.ps1` en bevat de naam, het mailadres en de boekingslink van de huidige gebruiker. Ontbreekt het: stop en meld dat `INSTALL.ps1` nog moet draaien — verzin nooit zelf een handtekening.
 2. **Body-HTML:** losse regels als `<div>…</div>`, witregels als expliciete `<div><br></div>`. Géén `<p>` (OWA plet alinea's), géén platte tekst met `\n` (collapsen).
    **Font = Aptos, verplicht.** Wikkel de complete bodytekst (alles vóór het handtekeningblok) in één wrapper: `<div style="font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)"> …body-divs… </div>`. Zonder deze wrapper rendert de body bij ontvangers in Times New Roman terwijl de handtekening in Aptos staat — dat mag nooit.
 3. **Geen eigen afsluiting** in de bodytekst. Het handtekeningblok bevat al "Met vriendelijke groet," plus de naam van de afzender. Laatste bodyzin = de laatste inhoudelijke zin.
@@ -95,7 +95,37 @@ weet of niet nodig heeft om te antwoorden. Bijna altijd kan er nog een derde af.
 
 **3b — Reply / reply-all:** `create-reply-draft` of `create-reply-all-draft` op het juiste bericht, met `Comment` = [Aptos-wrapper met reply-tekst-divs] + [`agyle-signature-url.html`-blok]. Zet CC's zo nodig opnieuw (`ccRecipients` overschrijft de hele lijst). Reply-all faalt op een eigen verzonden bericht → wijk uit naar het laatste bericht van de tegenpartij in dezelfde thread.
 
-**4 — Rapporteer:** onderwerp, ontvanger(s), en dat de draft klaarstaat en niet is verzonden. Eén regel. Geen base64/HTML in de terugkoppeling.
+**4 — Bijlagen (alleen als er documenten mee moeten).** Nooit via `add-mail-attachment` met `contentBytes`: die base64 moet de agent zelf uittypen, en een bestand van 200 KB is ~278.000 tekens, dus het wordt afgekapt en de bijlage komt corrupt aan. Gebruik de upload-sessie, dan gaan de bytes van schijf rechtstreeks naar Outlook zonder door de context te lopen.
+
+Per bijlage, ná het aanmaken van de draft (je hebt de `messageId` uit stap 3):
+
+1. Exacte bestandsgrootte in bytes ophalen: `stat -c '%s' "<pad>"`. Een verkeerde `size` laat de PUT falen.
+2. `create-mail-attachment-upload-session` met `messageId` en
+   `body = { AttachmentItem: { attachmentType: "file", name: "<nette bijlagenaam>.pdf", size: <bytes>, contentType: "application/pdf", isInline: false } }`.
+   De `name` is wat de ontvanger ziet: gebruik een leesbare naam, niet de interne bestandsnaam.
+3. De teruggegeven `uploadUrl` in een tijdelijk bestand zetten (hij bevat een `authtoken` van honderden tekens en breekt op quoting in de shell), dan streamen:
+
+```bash
+cat > url.txt <<'EOF'
+<uploadUrl>
+EOF
+curl -s -w '\nHTTP=%{http_code}\n' -X PUT "$(cat url.txt)" \
+  -H 'Content-Type: application/octet-stream' \
+  -H 'Content-Range: bytes 0-<size-1>/<size>' \
+  --data-binary @"<absoluut pad naar bestand>"
+```
+
+`--data-binary @bestand` leest van schijf; de bytes komen nooit in de context. **HTTP 201** = bijlage aangemaakt. Krijg je 200 met `nextExpectedRanges`, dan is het bestand groter dan één range en moet je in stukken door.
+
+4. Controleer met `list-mail-attachments` (`$select=name,size,isInline`) dat de bijlagen erop staan en `isInline: false` zijn.
+
+Aandachtspunten:
+- Microsoft documenteert upload-sessies voor 3–150 MB. Onder 3 MB werkt het in de praktijk prima in één PUT, en het is de enige route die niet op truncatie stukloopt.
+- De sessie verloopt na ~2 uur. Bij een verlopen token: nieuwe sessie aanmaken.
+- `update-mail-message` op de draft laat bestaande bijlagen staan; je kunt dus eerst attachen en daarna nog tekst of ontvangers wijzigen.
+- Vraagt de ontvanger om "alles in één PDF", meld dat aan de gebruiker in plaats van het stilzwijgend als losse bijlagen te sturen.
+
+**5 — Rapporteer:** onderwerp, ontvanger(s), eventuele bijlagen, en dat de draft klaarstaat en niet is verzonden. Eén regel. Geen base64/HTML in de terugkoppeling.
 
 ## Handtekening-feiten (voor referentie)
 

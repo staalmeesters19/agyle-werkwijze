@@ -41,6 +41,7 @@ agenda en het CRM te koppelen. Reken op een half uur.
 | [`docs/03-MCP-SETUP.md`](docs/03-MCP-SETUP.md) | Je systemen koppelen |
 | [`docs/04-DELIVERABLES.md`](docs/04-DELIVERABLES.md) | Welke skill wanneer |
 | [`docs/05-VEILIGHEID.md`](docs/05-VEILIGHEID.md) | Wat je niet moet doen |
+| [`docs/06-HANDTEKENING.md`](docs/06-HANDTEKENING.md) | Handtekening onder mails uit de MCP, ook zonder het hele pakket |
 
 ## Wat er geïnstalleerd wordt
 
